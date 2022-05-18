@@ -3,8 +3,8 @@ import os
 import socket , threading
 HOST="127.0.0.1"
 PORT = 12345
-global	a , b , c
 
+import random
 
 def cls():
     	os.system('clear')
@@ -15,7 +15,7 @@ def listen():
 		data = b""
 		while not data:
 			data = s.recv(1024)
-		print("\b\b\b","\b:", data.decode(), "\n > ", end = "")
+		print("\b\b\b", data.decode(), "\n > ", end = "")
 
 def get_input():
 	global sent
@@ -23,18 +23,22 @@ def get_input():
 		data = b""
 		while not data:
 			data = input(" >").encode()
-		sent = a.encode(),data
+		sent = IDcolor.encode()+a+"\033[1;0m".encode()+": ".encode()+data
 
 def listen_userID():
 	b = s.recv(1024)
 	c = s.recv(1024)
-	print("Two other users are ready. Presssing enter to continue.")
+	print("\rOther users are ready.          \nEnter your User ID: ", end = "")
+	get_userID.join()
 	cls()
 
 def get_userID():
-	print("Enter your User ID:", end = "")
+	global	a
+	print("Enter your User ID: ", end = "")
 	a = input().encode()
 	s.sendall(a)
+	print("Waiting for other users log in.")
+
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 	
@@ -46,7 +50,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
 	listen_userID.start()
 	get_userID.start()
+
+	listen_userID.join()
+	get_userID.join()
 	
+	global IDcolor
+	x = random.randint(0, 2)
+	if x==0:
+		IDcolor = "\033[1;"+str(random.randint(31, 36))+"m"
+	else:
+		IDcolor = "\033[1;"+str(random.randint(41, 46))+"m"
+
 	sent = b""
 
 
