@@ -55,7 +55,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 	get_userID.join()
 	
 	global IDcolor
-	x = random.randint(0, 2)
+	x = random.randint(0, 1)
 	if x==0:
 		IDcolor = "\033[1;"+str(random.randint(31, 36))+"m"
 	else:
