@@ -69,7 +69,7 @@ class VideoStreamWidget(object):
         y_shape = int(player.shape[0]) 
         four_cc = cv2.VideoWriter_fourcc(*"MJPG") #Using MJPEG codex
         #out = cv2.VideoWriter('out_file', four_cc, 20, (x_shape, y_shape)) 
-        ret, frame = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR) # Read the first frame.
+        frame = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR) # Read the first frame.
         while True: # Run until stream is out of frames
             start_time = time.time() # We would like to measure the FPS.
             results = self.score_frame(frame) # Score the Frame
@@ -78,7 +78,7 @@ class VideoStreamWidget(object):
             fps = 1/np.round(end_time - start_time, 3) #Measure the FPS.
             print(f"Frames Per Second : {fps}")
             cv2.imshow('frame', frame)# Write the frame onto the output.
-            ret, frame = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR) # Read next frame.
+            frame = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR) # Read next frame.
 
     def score_frame(frame,self):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
