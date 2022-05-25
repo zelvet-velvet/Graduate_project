@@ -1,4 +1,4 @@
-
+                                                           
 import threading
 import asyncio
 from djitellopy import Tello
@@ -15,8 +15,7 @@ img = cv2.imread('030..jpg')
 WINDOW_NAME = '030'
 cv2.imshow(WINDOW_NAME,img)
 
-global axis_spd 
-global yaw_spd
+
 
 axis_spd = 100
 yaw_spd = 80
