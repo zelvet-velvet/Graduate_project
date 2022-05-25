@@ -7,215 +7,152 @@ import asyncio
 import numpy as np
 
 
-img = cv2.imread('030..jpg')
-WINDOW_NAME = '030'
-cv2.imshow(WINDOW_NAME,img)
-key = cv2.waitKey(1)
-
 swarm = TelloSwarm.fromIps([
-    "192.168.137.220",
-    "192.168.137.7"
+    "192.168.137.218",
+    "192.168.137.77"
 ])
-#right_side
+
+#___ right side
 swarm1 = TelloSwarm.fromIps([
-    "192.168.137.220"
+    "192.168.137.218"
 ])
-#left_side
+
+
+#___ left side
+
 swarm2 = TelloSwarm.fromIps([
-    "192.168.137.7"
+    "192.168.137.77"
 ])
 
-swarm.connect(False)
-swarm.query_battery()
-#swarm.takeoff()
 
 
-#----------------------swarm1-------------------------------------#
+def main():
+    swarm.connect(False)
+    time.sleep(2)
+    swarm.query_battery()
+    print("ewe")
+    swarm_thread = Thread(target=swarm_key_ctrl, args=())
+    swarm_thread.start()
 
 
-def land1():
-    swarm1.land()
-    pass
 
-def move_forward1():
-    swarm1.send_rc_control(0,axis_spd,0,0)
-    pass
-
-def move_back1():
-    swarm1.send_rc_control(0,-axis_spd,0,0)
-    pass
-
-def move_left1():
-    swarm1.send_rc_control(axis_spd*-1,0,0,0)
-    pass
-
-def move_right1():
-    swarm1.send_rc_control(axis_spd,0,0,0)
-    pass
-    
-def rotate_clockwise1():
-    swarm1.send_rc_control(0,0,0,-yaw_spd)
-    pass
-
-def rotate_counter_clockwise1():
-    swarm1.send_rc_control(0,0,0,yaw_spd)
-    pass
-
-def move_up1():
-    swarm1.send_rc_control(0,0,hieght_spd,0)
-    pass
-
-def move_down1():
-    swarm1.send_rc_control(0,0,hieght_spd*-1,0)
-    pass
-
-
-def swarm1_key_ctrl1():            
+def swarm_key_ctrl():         
+    print("thread 1 begin")   
     second = 0.001
     bruh = int(second*1000)
+    img = cv2.imread('030..jpg')
+    WINDOW_NAME = '030'
+    cv2.imshow(WINDOW_NAME,img)
 
-    while True:
-        try:
+    axis_spd = 100
+    yaw_spd = 80
+    hieght_spd = 100
+    try:
+        print("while ing")
+        while True:
             key = cv2.waitKey(bruh) & 0xff
             bruh = int(second*1000)
             if key == ord('x'):
                 #self.capture.release()
-                Thread(target=land1, args=()).start()
+                swarm1.land()
+                swarm2.land()
                 cv2.destroyAllWindows()
                 exit(1)
+
+#------------swarm1------------------------#
             
             elif key == ord('w'):
-                Thread(target=move_forward1, args=()).start()
+                swarm1.send_rc_control(0,axis_spd,0,0)
             
             elif key == ord('s'):
-                Thread(target=move_back1, args=()).start()
+                swarm1.send_rc_control(0,-axis_spd,0,0)
             
             elif key == ord('a'):
-                Thread(target=move_left1, args=()).start()
+                swarm1.send_rc_control(axis_spd*-1,0,0,0)
             
             elif key == ord('d'):
-                Thread(target=move_right1, args=()).start()     
+                swarm1.send_rc_control(axis_spd,0,0,0)   
     
             elif key == ord('r'):
-                Thread(target=move_up1, args=()).start()
+                swarm1.send_rc_control(0,0,hieght_spd,0)
             
             elif key == ord('f'):
-                Thread(target=move_down1, args=()).start()
+                swarm1.send_rc_control(0,0,-hieght_spd,0)
 
             elif key == ord('q'):
-                Thread(target=rotate_clockwise1, args=()).start()
+                swarm1.send_rc_control(0,0,0,-yaw_spd)
                 bruh = int(60)
 
             elif key == ord('e'):
-                Thread(target=rotate_counter_clockwise1, args=()).start()
-                bruh = int(60)           
+                swarm1.send_rc_control(0,0,0,yaw_spd)
+                bruh = int(60)   
 
-            if key == 255 :
-               swarm1.send_rc_control(0,0,0,0)
-        except KeyboardInterrupt:
-            break
-    exit(1)
-#----------------------swarm1-------------------------------------#
-
-
-#----------------------swarm2-------------------------------------#
-
-
-def land2():
-    swarm2.land()
-    pass
-
-def move_forward2():
-    swarm2.send_rc_control(0,axis_spd,0,0)
-    pass
-
-def move_back2():
-    swarm2.send_rc_control(0,-axis_spd,0,0)
-    pass
-
-def move_left2():
-    swarm2.send_rc_control(axis_spd*-1,0,0,0)
-    pass
-
-def move_right2():
-    swarm2.send_rc_control(axis_spd,0,0,0)
-    pass
-    
-def rotate_clockwise2():
-    swarm2.send_rc_control(0,0,0,-yaw_spd)
-    pass
-
-def rotate_counter_clockwise2():
-    swarm2.send_rc_control(0,0,0,yaw_spd)
-    pass
-
-def move_up2():
-    swarm2.send_rc_control(0,0,hieght_spd,0)
-    pass
-
-def move_down2():
-    swarm2.send_rc_control(0,0,hieght_spd*-1,0)
-    pass
-
-
-def swarm2_key_ctrl():            
-    second = 0.001
-    bruh = int(second*1000)
-
-    while True:
-        try:
-            key = cv2.waitKey(bruh) & 0xff
-            bruh = int(second*1000)
-            if key == ord('x'):
-                Thread(target=land2, args=()).start()
-                Thread(target=land1, args=()).start()
-                swarm1_thread.sleep(True)
-                swarm2_thread.sleep(True)
-                cv2.destroyAllWindows()
-                exit(1)
+            elif key == ord('t'):
+                swarm1.takeoff()
+                time.sleep(3)
             
+            elif key == ord('g'):
+                swarm1.land()
+                time.sleep(3)   
+
+
+#------------swarm1------------------------#
+
+#------------swarm2------------------------#
+
             elif key == ord('i'):
-                Thread(target=move_forward2, args=()).start()
+                swarm2.send_rc_control(0,axis_spd,0,0)
             
             elif key == ord('k'):
-                Thread(target=move_back2, args=()).start()
+                swarm2.send_rc_control(0,-axis_spd,0,0)
             
             elif key == ord('j'):
-                Thread(target=move_left2, args=()).start()
+                swarm2.send_rc_control(axis_spd*-1,0,0,0)
             
             elif key == ord('l'):
-                Thread(target=move_right2, args=()).start()     
+                swarm2.send_rc_control(axis_spd,0,0,0)   
     
             elif key == ord('p'):
-                Thread(target=move_up2, args=()).start()
+                swarm2.send_rc_control(0,0,hieght_spd,0)
             
             elif key == ord(';'):
-                Thread(target=move_down2, args=()).start()
+                swarm2.send_rc_control(0,0,-hieght_spd,0)
 
             elif key == ord('u'):
-                Thread(target=rotate_clockwise2, args=()).start()
+                swarm2.send_rc_control(0,0,0,-yaw_spd)
                 bruh = int(60)
 
             elif key == ord('o'):
-                Thread(target=rotate_counter_clockwise2, args=()).start()
-                bruh = int(60)           
+                swarm2.send_rc_control(0,0,0,yaw_spd)
+                bruh = int(60)   
+
+            elif key == ord('['):
+                swarm2.takeoff()
+                time.sleep(3)
+            
+            elif key == ord("'"):
+                swarm2.land()
+                time.sleep(3)   
+
+#------------swarm2------------------------#
+
+            elif key == ord("z"):
+                cv2.destroyAllWindows()
+   
 
             if key == 255 :
-               swarm2.send_rc_control(0,0,0,0)
-        except KeyboardInterrupt:
-            Thread(target=land2, args=()).start()
-            Thread(target=land1, args=()).start()
-            swarm1_thread.sleep(True)
-            swarm2_thread.sleep(True)
-            cv2.destroyAllWindows()
-            exit(1)
+               swarm.send_rc_control(0,0,0,0)
 
-#----------------------swarm2-------------------------------------#
 
+    except KeyboardInterrupt:
+        swarm1.land()
+        swarm2.land()
+        swarm1_thread.sleep(10)
+        swarm2_thread.sleep(10)
+        cv2.destroyAllWindows()
+        exit(1)
+
+               
 if __name__ == '__main__':
-    swarm2_thread = Thread(target=swarm2_key_ctrl, args=(),daemon = True)
-    swarm1_thread = Thread(target=swarm1_key_ctrl, args=(),daemon = True)
-    print("Two thread start")
-    swarm2_thread.start()
-    swarm1_thread.start()
-
+    main()
+    pass
