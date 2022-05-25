@@ -3,13 +3,12 @@ import threading
 import asyncio
 from djitellopy import Tello
 import cv2, math, time
-import keyboard
 from threading import Thread
 import numpy as np
 
 
 tello = Tello()
-tello.connect()
+tello.connect(False)
 #send_rc_control(self, left_right_velocity: int, forward_backward_velocity: int, up_down_velocity: int,yaw_velocity: int):
 
 img = cv2.imread('030..jpg')
@@ -64,57 +63,65 @@ def move_down():
     pass
 
 
+def main():            
+    second = 0.001
+    bruh = int(second*1000)
+
+    while True:
+        try:
+            key = cv2.waitKey(bruh) & 0xff
+            bruh = int(second*1000)
+            if key == ord('x'):
+                #self.capture.release()
+                Thread(target=land, args=()).start()
+                cv2.destroyAllWindows()
+                exit(1)
             
-second = 0.001
-
-
-bruh = int(second*1000)
-
-while True:
-    try:
-        key = cv2.waitKey(bruh) & 0xff
-        bruh = int(second*1000)
-        if key == ord('x'):
-            #self.capture.release()
-            Thread(target=land, args=()).start()
-            cv2.destroyAllWindows()
-            exit(1)
+            elif key == ord('w'):
+                Thread(target=move_forward, args=()).start()
             
-        elif key == ord('w'):
-            Thread(target=move_forward, args=()).start()
+            elif key == ord('s'):
+                Thread(target=move_back, args=()).start()
             
-        elif key == ord('s'):
-            Thread(target=move_back, args=()).start()
+            elif key == ord('a'):
+                Thread(target=move_left, args=()).start()
             
-        elif key == ord('a'):
-            Thread(target=move_left, args=()).start()
+            elif key == ord('d'):
+                Thread(target=move_right, args=()).start()     
+    
+            elif key == ord('r'):
+                Thread(target=move_up, args=()).start()
             
-        elif key == ord('d'):
-            Thread(target=move_right, args=()).start()     
+            elif key == ord('f'):
+                Thread(target=move_down, args=()).start()
 
-        elif key == ord('r'):
-            Thread(target=move_up, args=()).start()
+            elif key == ord('q'):
+                Thread(target=rotate_clockwise, args=()).start()
+                bruh = int(60)
+
+            elif key == ord('e'):
+                Thread(target=rotate_counter_clockwise, args=()).start()
+                bruh = int(60)           
+
+            elif key == ord('t'):
+                Thread(target=takeoff, args=()).start()
+                time.sleep(3)
             
-        elif key == ord('f'):
-            Thread(target=move_down, args=()).start()
+            elif key == ord('l'):
+                Thread(target=land, args=()).start()
+                time.sleep(3)
 
-        elif key == ord('q'):
-            Thread(target=rotate_clockwise, args=()).start()
-            bruh = int(60)
-
-        elif key == ord('e'):
-            Thread(target=rotate_counter_clockwise, args=()).start()
-            bruh = int(60)            
-        elif key == ord('t'):
-            Thread(target=takeoff, args=()).start()
-            
-        elif key == ord('l'):
-            Thread(target=land, args=()).start()
-
-        if key == 255 :
-           tello.send_rc_control(0,0,0,0)
+            if key == 255 :
+               tello.send_rc_control(0,0,0,0)
+        except KeyboardInterrupt:
+            break
+    exit(1)
+        
 
 
-    except AttributeError:
-        pass
+if __name__ == '__main__':
+    main()
+    time.sleep(1)
 
+
+ 
