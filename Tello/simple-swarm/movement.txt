@@ -1,0 +1,26 @@
+
+ w 119 i 105  swarm2.send_rc_control(0,axis_spd,0,0)
+            
+
+ s 115 k 107   swarm2.send_rc_control(0,-axis_spd,0,0)
+            
+
+ a 97  j 106    swarm2.send_rc_control(axis_spd*-1,0,0,0)
+            
+
+ d 100 l 108     swarm2.send_rc_control(axis_spd,0,0,0)   
+    
+
+ r 114 p 112   swarm2.send_rc_control(0,0,hieght_spd,0)
+            
+
+ f 102 ; 59    swarm2.send_rc_control(0,0,-hieght_spd,0)
+
+
+ q 113 u 117  swarm2.send_rc_control(0,0,0,-yaw_spd)
+                
+
+ e 101 o 111  swarm2.send_rc_control(0,0,0,yaw_spd)
+                
+
+

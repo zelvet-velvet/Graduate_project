@@ -1,0 +1,114 @@
+               """
+    except KeyboardInterrupt:
+        Thread(target=land2, args=()).start()
+        Thread(target=land1, args=()).start()
+        swarm1_thread.sleep(True)
+        swarm2_thread.sleep(True)
+        cv2.destroyAllWindows()
+               """
+
+#----------------------swarm2-------------------------------------#
+
+def takeoff2():
+    swarm2.takeoff()
+    pass
+
+def land2():
+    swarm2.land()
+    pass
+
+def move_forward2():
+    swarm2.send_rc_control(0,axis_spd,0,0)
+    pass
+
+def move_back2():
+    swarm2.send_rc_control(0,-axis_spd,0,0)
+    pass
+
+def move_left2():
+    swarm2.send_rc_control(axis_spd*-1,0,0,0)
+    pass
+
+def move_right2():
+    swarm2.send_rc_control(axis_spd,0,0,0)
+    pass
+    
+def rotate_clockwise2():
+    swarm2.send_rc_control(0,0,0,-yaw_spd)
+    pass
+
+def rotate_counter_clockwise2():
+    swarm2.send_rc_control(0,0,0,yaw_spd)
+    pass
+
+def move_up2():
+    swarm2.send_rc_control(0,0,hieght_spd,0)
+    pass
+
+def move_down2():
+    swarm2.send_rc_control(0,0,hieght_spd*-1,0)
+    pass
+
+
+def swarm2_key_ctrl():            
+    second = 0.001
+    bruh = int(second*1000)
+
+    while True:
+        try:
+            key = cv2.waitKey(bruh) & 0xff
+            bruh = int(second*1000)
+            if key == ord('x'):
+                Thread(target=land2, args=()).start()
+                Thread(target=land1, args=()).start()
+                swarm1_thread.sleep(True)
+                swarm2_thread.sleep(True)
+                cv2.destroyAllWindows()
+                exit(1)
+            
+            elif key == ord('i'):
+                Thread(target=move_forward2, args=()).start()
+            
+            elif key == ord('k'):
+                Thread(target=move_back2, args=()).start()
+            
+            elif key == ord('j'):
+                Thread(target=move_left2, args=()).start()
+            
+            elif key == ord('l'):
+                Thread(target=move_right2, args=()).start()     
+    
+            elif key == ord('p'):
+                Thread(target=move_up2, args=()).start()
+            
+            elif key == ord(';'):
+                Thread(target=move_down2, args=()).start()
+
+            elif key == ord('u'):
+                Thread(target=rotate_clockwise2, args=()).start()
+                bruh = int(60)
+
+            elif key == ord('o'):
+                Thread(target=rotate_counter_clockwise2, args=()).start()
+                bruh = int(60)    
+
+            elif key == ord('t'):
+                Thread(target=takeoff2, args=()).start()
+                time.sleep(3)
+            
+            elif key == ord('l'):
+                Thread(target=land2, args=()).start()
+                time.sleep(3)       
+
+            if key == 255 :
+               swarm2.send_rc_control(0,0,0,0)
+
+        except KeyboardInterrupt:
+            Thread(target=land2, args=()).start()
+            Thread(target=land1, args=()).start()
+            swarm1_thread.sleep(True)
+            swarm2_thread.sleep(True)
+            cv2.destroyAllWindows()
+            exit(1)
+
+#----------------------swarm2-------------------------------------#

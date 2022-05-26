@@ -9,15 +9,22 @@ import imutils
 from PIL import Image
 from matplotlib import pyplot as plt
 
-path = r'C:\yolov5-master'
-model = torch.hub.load(path, 'yolov5s',source='local', pretrained=True)
+
 tello = Tello()
 tello.connect()
 tello.streamon()
 
-stream = cv2.VideoCapture('udp://0.0.0.0.11111',cv2.CAP_FFMPEG)
+frame_read = tello.get_frame_read()
 
 class VideoStreamWidget(object):
+    path = r'C:\yolov5-master'
+    model = torch.hub.load(path, 'yolov5s',source='local', pretrained=True)
+    def update(self):
+        global frame
+        while True:
+            self.frame = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR)
+            print("meow")
+            time.sleep(.01)
 
     def score_frame(frame, model):
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -49,16 +56,18 @@ class VideoStreamWidget(object):
             return frame
 
     def __init__(self):
-        player = self.get_video_stream() #Get your video stream.
-        assert player.isOpened() # Make sure that their is a stream. 
+        self.thread = Thread(target=self.update, args=())######
+        self.thread.daemon = True
+        self.thread.start()
+        player = cv2.cvtColor(frame_read.frame,cv2.COLOR_RGB2BGR)
         #Below code creates a new video writer object to write our
         #output stream.
         x_shape = int(player.get(cv2.CAP_PROP_FRAME_WIDTH))
         y_shape = int(player.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        four_cc = cv2.VideoWriter_fourcc(*"MJPG") #Using MJPEG codex
+        #four_cc = cv2.VideoWriter_fourcc(*"MJPG") #Using MJPEG codex
         #out = cv2.VideoWriter(out_file, four_cc, 20, (x_shape, y_shape)) 
-        ret, frame = player.read() # Read the first frame.
-        while rect: # Run until stream is out of frames
+        frame = frame_read.frame # Read the first frame.
+        while True: 
             start_time = time() # We would like to measure the FPS.
             results = self.score_frame(frame) # Score the Frame
             frame = self.plot_boxes(results, frame) # Plot the boxes.
@@ -67,7 +76,7 @@ class VideoStreamWidget(object):
             print(f"Frames Per Second : {fps}")
             #out.write(frame) # Write the frame onto the output.
             cv2.imshow('object detection',frame)
-            ret, frame = player.read() # Read next frame.
+            frame = frame_read.frame # Read next frame.
 
 if __name__ == '__main__':
     video_stream_widget = VideoStreamWidget()
