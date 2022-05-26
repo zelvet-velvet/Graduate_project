@@ -1,55 +1,29 @@
-
 from threading import Thread
 from djitellopy import Tello
 import cv2, math, time
-import torch
 import os
-import numpy as np
-import asyncio
-import imutils
-from PIL import Image
-from matplotlib import pyplot as plt
 
 
-path = r'C:\yolov5-master'
-model = torch.hub.load(path, 'yolov5s',source='local', pretrained=True)
-"""
 tello = Tello()
-tello.connect()
-
-
-
+tello.connect(False)
 tello.streamon()
-frame_read = tello.get_frame_read()
-"""
-    
+print(tello.get_udp_video_address())
+print(type(tello.get_udp_video_address()))
+
+bruh = tello.get_frame_read()
 
 
-
-global frame
-frame = cv2.imread('smol_Ina.jpg')
-           
-result = model(frame)
-print(type(result))
-cv2.imshow(  frame.permute(1, 2, 0)  )
-
-
-
-
-
-
-
-
-
-
-#result = np.array(result)
-#vale = torch.from_numpy(result)
-#frame_resized = cv2.resize(vale, (960, 720),interpolation=cv2.INTER_LINEAR)
-#print(type(frame_resized))
-#print("weeew")
-#cv2.imshow('frame', frame_resized)
-key = cv2.waitKey(1)
-
+try:
+    print("while ing")
+    while True:
+        img = bruh.frame
+        #img = cv2.cvtColor(img,cv2.COLOR_RGB2BGR)
+        cv2.imshow("Image", img)
+        cv2.waitKey(1)
+except KeyboardInterrupt:
+    exit(1)
+finally:
+    print("fin")
 
 
 

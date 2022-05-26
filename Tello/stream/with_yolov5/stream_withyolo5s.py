@@ -6,7 +6,7 @@ import os
 path = r'C:\yolov5-master'
 model = torch.hub.load(path, 'yolov5s',source='local', pretrained=True)
 tello = Tello()
-tello.connect()
+tello.connect(False)
 #tello.takeoff()
 
 #Tello.set_video_fps('FPS_30')
