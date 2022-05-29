@@ -5,6 +5,7 @@ from threading import Thread
 import threading
 import asyncio
 import numpy as np
+from pynput.keyboard import Listener as KeyboardListener
 
 
 swarm = TelloSwarm.fromIps([
@@ -34,28 +35,31 @@ def main():
     swarm_thread = Thread(target=swarm_key_ctrl, args=())
     swarm_thread.start()
 
-
+global p_or_r
+global bruh
+bruh = ""
+a= ""
+p_or_r = 0
+press_list = []
 
 def swarm_key_ctrl():         
-    global bruh
-    global key
     print("thread 1 begin")   
-    second = 0.001
-    bruh = int(second*1000)
-    img = cv2.imread('030..jpg')
-    WINDOW_NAME = '030'
-    cv2.imshow(WINDOW_NAME,img)
 
-    axis_spd = 100
-    yaw_spd = 80
-    hieght_spd = 100
     try:
-        print("while ing")
         while True:
-            key = cv2.waitKey(bruh) & 0xff
-            bruh = int(second*1000)
-            acting(x)
-
+            if on_press.k != "" and on_press.k not in press_list:
+                press_list.extend(on_press.k)
+                moving_Thread = on_press.k
+                global evt
+                evt = moving_Thread+"evt"
+                evt = threading.Event()
+                moving_Thread+"evt".isSet()
+                moving_Thread = Thread(target = move,daemon = True)
+                moving_Thread.start()
+            if on_release.k != "" and on_release.k in press_list:
+                press_list.remove(on_release.k)
+                evt = on_release.r + "evt"
+                evt.clear()
     except KeyboardInterrupt:
         swarm1.land()
         swarm2.land()
@@ -64,7 +68,20 @@ def swarm_key_ctrl():
         cv2.destroyAllWindows()
         exit(1)
 
+def move():
+    z=on_press.k
+    while evt:
+        acting(on_press.k)
+
 def acting(x):
+
+    second = 0.001
+    bruh = int(second*1000)
+
+    axis_spd = 100
+    yaw_spd = 80
+    hieght_spd = 100
+
     match x:
         case ord('x'):
             #self.capture.release()
@@ -75,11 +92,10 @@ def acting(x):
 
 #------------swarm1------------------------#
 
-        case ord('w'):
+        case 'w':
             swarm1.send_rc_control(0,axis_spd,0,0)
-            if key-ord(
             
-        case ord('s'):
+        case 's':
             swarm1.send_rc_control(0,-axis_spd,0,0)
             
         case ord('a'):
@@ -159,7 +175,24 @@ def acting(x):
         case 255:
             swarm.send_rc_control(0,0,0,0)
 
-               
+def on_press(key):
+    print(f"press{key}")
+    on_press.k = f"{key}"
+
+def on_release(key):
+    print(f"release{key}")
+    on_release.r = f"{key}"
+
+
+
+
+
+# Setup the listener threads
+keyboard_listener = KeyboardListener(on_press=on_press, on_release=on_release)
+
+# Start the threads and join them so the script doesn't end early
+keyboard_listener.start()
+keyboard_listener.join()
 if __name__ == '__main__':
     main()
     pass
