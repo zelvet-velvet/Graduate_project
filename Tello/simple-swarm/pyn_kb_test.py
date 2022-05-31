@@ -5,13 +5,15 @@ import threading
 from pynput.keyboard import Key, Controller
 
 def on_press(key):
-    print("Key pressed: {0}".format(key))
+    #print("Key pressed: {0}".format(key))
     global k
     k =f"{key}"
+    if k=='"\'"':
+        k="@"
     
 
 def on_release(key):
-    print("Key release: {0}".format(key))
+    #print("Key release: {0}".format(key))
     global r
     r = f"{key}"
 

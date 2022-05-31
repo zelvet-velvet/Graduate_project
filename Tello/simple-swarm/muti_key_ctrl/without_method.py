@@ -118,18 +118,18 @@ def cls():
     	os.system('cls')
 
 def animation():
-    global A , B , w , n , s , d , i , j , m , l
+    global A , B , ww , nn , ss , dd , ii , jj , mm , ll
     A = "         "
     B = "         "
     while True:
-        w="  "
-        n="  "
-        s="  "
-        d="  "
-        i="  "
-        j="  "
-        m="  "
-        l="  "
+        ww="  "
+        nn="  "
+        ss="  "
+        dd="  "
+        ii="  "
+        jj="  "
+        mm="  "
+        ll="  "
         A = "         "
         B = "         "
         for x in press_list:
@@ -139,18 +139,19 @@ def animation():
         print("")               
         print("tello1            tello2")               
         print("")
-        print("       "+w+"                 "+i+"         ") 
+        print("       "+ww+"                 "+ii+"         ") 
         print("                                    " )
-        print("   "+n+"  "+s+"  "+d+A+j+"  "+m+"  "+l+B)
+        print("   "+nn+"  "+ss+"  "+dd+A+jj+"  "+mm+"  "+ll+B)
         print(press_list)
         print(r_list)
+        print("k:"+k+"r:"+r)
         A = "         "
         B = "         "
         time.sleep(0.65)
 
 
 def action_name(p):
-    global A , B , w , n , s , d , i , j , m , l
+    global A , B , ww , nn , ss , dd , ii , jj , mm , ll
     if p== 'q':
         A = "   CCW   "
     if p== 'e':
@@ -178,22 +179,22 @@ def action_name(p):
         B = "  Land   "
 
     if p== 'w':
-        w = "↑"
+        ww = "↑"
     if p== 'a':
-        n = "←"
+        nn = "←"
     if p== 's':
-        s = "↓"
+        ss = "↓"
     if p== 'd':
-        d = "→"
+        dd = "→"
 
     if p== 'i':
-        i = "↑"
+        ii = "↑"
     if p== 'j':
-        j = "←"
+        jj = "←"
     if p== 'k':
-        m = "↓"
+        mm = "↓"
     if p== 'l':
-        l = "→"
+        ll = "→"
 
                 
 
