@@ -34,7 +34,7 @@ class b():
     def __init__(self):
         while True:
             print("r:"+r+"k:"+k)
-            time.sleep(1)
+            #time.sleep(1)
 
 
 # Setup the listener threads

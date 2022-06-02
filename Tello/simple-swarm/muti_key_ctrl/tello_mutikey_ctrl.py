@@ -20,7 +20,7 @@ swarm1 = TelloSwarm.fromIps([
     "192.168.137.205"
 ])
 
-
+"""
 #___ left side
 
 swarm2 = TelloSwarm.fromIps([
@@ -32,7 +32,7 @@ swarm2.connect(False)
 time.sleep(2)
 swarm2.query_battery()
 print("ewe")
-"""
+
 class movement(object):
 
     press_event = threading.Event()
@@ -45,18 +45,13 @@ class movement(object):
         print("class movement init")   
         press_response_thread = Thread(target=self.press_response,daemon = True)
         release_response_thread = Thread(target=self.release_response,daemon = True)
-        swarm1_moving_thread = Thread(target=swarm1_moving,daemon = True)
-        swarm2_moving_thread = Thread(target=swarm2_moving,daemon = True)
 
         self.press_event.set()
         self.release_event.set()
         animation_event.set()
 
-
         press_response_thread.start()
         release_response_thread.start()
-        swarm1_moving_thread.start()
-        swarm2_moving_thread.start()
         #animation_thread.start()
 
 
@@ -71,8 +66,6 @@ class movement(object):
             self.press_event.clear()
             self.release_event.clear()
             animation_event.clear()
-            swarm1_moving_event.clear()
-            swarm2_moving_event.clear()
             print("Fin")
             exit(1)
         
@@ -100,7 +93,7 @@ class movement(object):
 
 
     def release_response(self): 
-        global pressing_key,release_key,press_repeat,press_list,stop
+        global pressing_key,release_key,press_repeat,press_list
 
         while self.release_event:
             if len(press_repeat)>len(press_list):
@@ -108,22 +101,21 @@ class movement(object):
                     if x not in press_list:
                         evt = x.replace("'","") + "evt"
                         globals()[evt].clear()
-                        moving(x,1)
                         press_repeat.remove(x.replace("'",""))
                         if x in r_list:
                             r_list.remove(x.replace("'",""))
-
+                        Thread(target=stop, args=()).start()
 
 
     def move(self):
         zz = pressing_key.replace("'","")
-        print(" "+zz+" move start")
+        print(zz+" move start")
         evt = zz + "evt"
         try:
             while globals()[evt].isSet() and self.press_event:
-                moving(zz.replace("'",""),0)
+                moving(zz.replace("'",""))
                 #print(evt+"move  "+zz)
-                time.sleep(0.5)
+                time.sleep(0.8)
         except:
             pass
 
@@ -273,102 +265,111 @@ def action_name(p):
         ll = "→"
 
 
-def moving(zz,stop):
-    global xxx,yyy,sss,ttt,xxx2,yyy2,sss2,ttt2
-    axis_spd = 70
-    yaw_spd = 80
-    hieght_spd = 70
-#-------------------swarm1-------------------#
-    if stop == 0:
-        if zz== 'q':
-            yyy=-yaw_spd
-        if zz== 'e':
-            yyy=yaw_spd
-    else:
-        yyy=0
-    if stop == 0:
-        if zz== 'r':
-            xxx=hieght_spd
-        if zz== 'f':
-            xxx=-hieght_spd
-    else:
-        xxx=0
+def moving(zz):
+    if zz== 'q':
+        Thread(target=rotate_clockwise, args=()).start()
+    if zz== 'e':
+        Thread(target=rotate_counter_clockwise, args=()).start()
+    if zz== 'r':
+        Thread(target=move_up, args=()).start()
+    if zz== 'f':
+        Thread(target=move_down, args=()).start()
 
-    if stop == 0:
-        if zz== 'w':
-            ttt=axis_spd
-        if zz== 's':
-            ttt=-axis_spd
-    else:
-        ttt=0
-    if stop == 0:
-        if zz== 'a':
-            sss=-axis_spd
-        if zz== 'd':
-            sss=axis_spd
-    else:
-        sss=0
-#-------------------swarm2-------------------#
-    if stop == 0:
-        if zz=='u':
-            yyy2=-yaw_spd
-        if zz== 'o':
-            yyy2=yaw_spd
-    else:
-        yyy2=0
-    if stop == 0:
-        if zz== 'p':
-            xxx2=hieght_spd
-        if zz== ';':
-            xxx2=-hieght_spd
-    else:
-        xxx2=0
+    if zz=='u':
+        Thread(target=rotate_clockwise2, args=()).start()
+    if zz== 'o':
+        Thread(target=rotate_counter_clockwise2, args=()).start()
+    if zz== 'p':
+        Thread(target=move_up2, args=()).start()
+    if zz== ';':
+        Thread(target=move_down2, args=()).start()
 
 
-    if stop == 0:
-        if zz== 'i':
-            ttt2=axis_spd
-        if zz== 'k':
-            ttt2=-axis_spd
-    else:
-        ttt2=0
-    if stop == 0:
-        if zz== 'j':
-            sss2=-axis_spd
-        if zz== 'l':
-            sss2=axis_spd
-    else:
-        sss2=0
+    if zz== 'w':
+        print("move w")
+        Thread(target=move_forward, args=()).start()
+    if zz== 'a':
+        print("move a")
+        Thread(target=move_left, args=()).start()
+    if zz== 's':
+        print("move s")
+        Thread(target=move_back, args=()).start()
+    if zz== 'd':
+        print("move d")
+        Thread(target=move_right, args=()).start() 
+
+    if zz== 'i':
+        print("ewe")
+        Thread(target=move_forward2, args=()).start()
+    if zz== 'j':
+        Thread(target=move_left2, args=()).start()
+    if zz== 'k':
+        Thread(target=move_back2, args=()).start()
+    if zz== 'l':
+        Thread(target=move_right2, args=()).start() 
 
 
-swarm1_moving_event = threading.Event()
-swarm2_moving_event = threading.Event()
-swarm1_moving_event.set()
-swarm2_moving_event.set()
 
-def swarm1_moving():
-    global sss,ttt,xxx,yyy
-    sss=0
-    ttt=0
-    xxx=0
-    yyy=0
-    while swarm1_moving_event.isSet():
-        #swarm1.send_rc_control(sss,ttt,xxx,yyy)
-        print("swarm1: "+str(sss)+" , "+str(ttt)+" , "+str(xxx)+" , "+str(yyy))
-        time.sleep(0.5)
+axis_spd = 70
+yaw_spd = 80
+hieght_spd = 70
+def move_forward():
+    swarm1.send_rc_control(0,axis_spd,0,0)
     pass
-def swarm2_moving():
-    global sss2,ttt2,xxx2,yyy2
-    sss2=0
-    ttt2=0
-    xxx2=0
-    yyy2=0
-    while swarm2_moving_event.isSet():
-        #swarm2.send_rc_control(sss2,ttt2,xxx2,yyy2)
-        print("swarm2: "+str(sss2)+" , "+str(ttt2)+" , "+str(xxx2)+" , "+str(yyy2))
-        time.sleep(0.5)
+def move_back():
+    swarm1.send_rc_control(0,-axis_spd,0,0)
+    pass
+def move_left():
+    swarm1.send_rc_control(axis_spd*-1,0,0,0)
+    pass
+def move_right():
+    swarm1.send_rc_control(axis_spd,0,0,0)
+    pass
+def rotate_clockwise():
+    swarm1.send_rc_control(0,0,0,-yaw_spd)
+    pass
+def rotate_counter_clockwise():
+    swarm1.send_rc_control(0,0,0,yaw_spd)
+    pass
+def move_up():
+    swarm1.send_rc_control(0,0,hieght_spd,0)
+    pass
+def move_down():
+    swarm1.send_rc_control(0,0,hieght_spd*-1,0)
     pass
 
+
+def move_forward2():
+    swarm2.send_rc_control(0,axis_spd,0,0)
+    pass
+def move_back2():
+    swarm2.send_rc_control(0,-axis_spd,0,0)
+    pass
+def move_left2():
+    swarm2.send_rc_control(axis_spd*-1,0,0,0)
+    pass
+def move_right2():
+    swarm2.send_rc_control(axis_spd,0,0,0)
+    pass
+def rotate_clockwise2():
+    swarm2.send_rc_control(0,0,0,-yaw_spd)
+    pass
+def rotate_counter_clockwise2():
+    swarm2.send_rc_control(0,0,0,yaw_spd)
+    pass
+def move_up2():
+    swarm1.send_rc_control(0,0,hieght_spd,0)
+    pass
+def move_down2():
+    swarm2.send_rc_control(0,0,hieght_spd*-1,0)
+    pass
+
+def stop():
+    time.sleep(0.2)
+    #swarm.send_rc_control(0,0,0,0)
+    #swarm1.send_rc_control(0,0,0,0)
+    swarm2.send_rc_control(0,0,0,0)
+    pass
 
 # Setup the listener threads
 keyboard_listener = KeyboardListener(on_press=on_press, on_release=on_release)
@@ -377,8 +378,6 @@ keyboard_listener = KeyboardListener(on_press=on_press, on_release=on_release)
 keyboard_listener.start()
 
 animation_thread = Thread(target=animation,daemon = True)
-
-
 
 
 if __name__ == '__main__':
